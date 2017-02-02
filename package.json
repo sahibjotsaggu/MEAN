@@ -1,20 +1,20 @@
 {
-	"name": "MEAN",
-	"version": "0.0.1",
-	"description": "Following along with the book, MEAN Machine to create a basic MEAN application.",
-	"main": "server.js",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/sahibjotsaggu/MEAN"
-	},
-	"dependencies": {
-		"express": "latest",
-		"morgan": "latest",
-		"mongoose": "latest",
-		"nodemon": "latest",
-		"body-parser": "latest",
-		"bcrypt": "latest"
-	},
-	"author": "Sahibjot Saggu",
-	"license": "MIT"
+  "name": "MEAN",
+  "version": "0.0.1",
+  "description": "Following along with the book, MEAN Machine to create a basic MEAN application.",
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sahibjotsaggu/MEAN"
+  },
+  "dependencies": {
+    "bcrypt": "latest",
+    "body-parser": "latest",
+    "express": "latest",
+    "mongoose": "latest",
+    "morgan": "latest",
+    "nodemon": "latest"
+  },
+  "author": "Sahibjot Saggu",
+  "license": "MIT"
 }
