@@ -9,7 +9,11 @@
 	},
 	"dependencies": {
 		"express": "latest",
-		"mongoose": "latest"
+		"morgan": "latest",
+		"mongoose": "latest",
+		"nodemon": "latest",
+		"body-parser": "latest",
+		"bcrypt": "latest"
 	},
 	"author": "Sahibjot Saggu",
 	"license": "MIT"
