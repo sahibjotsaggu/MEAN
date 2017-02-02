@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var port = process.env.PORT || 8080;
+var User = require('./app/models/user');
 
 var app = express();
 
@@ -17,6 +18,9 @@ app.use(function(req, res, next) {
 });
 
 app.use(morgan('dev'));
+
+var db_url = 'mongodb://localhost:27017/MEAN';
+mongoose.connect(db_url);
 
 app.get('/', function(req, res) {
 	res.send('Welcome to the home page!');
