@@ -11,6 +11,7 @@
     "bcrypt": "latest",
     "body-parser": "latest",
     "express": "latest",
+    "jsonwebtoken": "^7.2.1",
     "mongoose": "latest",
     "morgan": "latest",
     "nodemon": "latest"
