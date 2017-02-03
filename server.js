@@ -50,8 +50,8 @@ apiRouter.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to the api!' });
 });
 
-// POST to /users to create a new user
-// GET /users to get all users in the database
+// create a new user
+// get all users
 apiRouter.route('/users')
 	.post(function(req, res) {
 		var user = new User();
@@ -69,7 +69,7 @@ apiRouter.route('/users')
 					return res.send(err);
 				}
 			}
-			res.json( { message: 'User created!'} );
+			res.json({ message: 'User created!' });
 		});
 	})
 	.get(function(req, res) {
@@ -78,6 +78,55 @@ apiRouter.route('/users')
 				res.send(err);
 			}
 			res.json(users);
+		});
+	});
+
+// get a specific user with user_id
+// update specific user information
+// delete specific user
+apiRouter.route('/users/:user_id')
+	.get(function(req, res) {
+		User.findById(req.params.user_id, function(err, user) {
+			if (err) {
+				res.send(err);
+			}
+			res.json(user);
+		});
+	})
+	.put(function(req, res) {
+		User.findById(req.params.user_id, function(err, user) {
+			if (err) {
+				res.send(err);
+			}
+
+			if (req.body.name) {
+				user.name = req.body.name;
+			}
+
+			if (req.body.username) {
+				user.username = req.body.username;
+			}
+
+			if (req.body.password) {
+				user.password = req.body.password;
+			}
+
+			user.save(function(err) {
+				if (err) {
+					res.send(err);
+				}
+				res.json({ message: 'User updated!' });
+			});
+		});
+	})
+	.delete(function(req, res) {
+		User.remove({
+			_id: req.params.user_id
+		}, function(err, user) {
+			if (err) {
+				return res.send(err);
+			}
+			res.json({ message: 'User deleted!' });
 		});
 	});
 
