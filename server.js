@@ -106,6 +106,10 @@ apiRouter.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to the api!' });
 });
 
+apiRouter.get('/me', function(req, res) {
+	res.send(req.decoded);
+});
+
 // create a new user
 // get all users
 apiRouter.route('/users')
