@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
 const saltRounds = 10;
 
 var UserSchema = new Schema({
@@ -39,12 +39,7 @@ UserSchema.pre('save', function(next) {
 // method for comparing user entered password with hashed password in the database
 UserSchema.methods.comparePassword = function(password) {
 	var user = this;
-	bcrypt.compare(password, user.password, function(err, res) {
-		if (err) {
-			return err;
-		}
-		return res;
-	});
+	return bcrypt.compareSync(password, user.password);
 };
 
 module.exports = mongoose.model('User', UserSchema);

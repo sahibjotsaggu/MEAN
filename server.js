@@ -5,6 +5,8 @@ var mongoose = require('mongoose');
 var port = process.env.PORT || 8080;
 mongoose.Promise = global.Promise;
 var User = require('./app/models/user');
+var jwt = require('jsonwebtoken');
+var secret = 'thisismysecretpasswordthatnooneshouldknow';
 
 try {
 	exec();
@@ -37,17 +39,75 @@ app.get('/', function(req, res) {
 
 var apiRouter = express.Router();
 
+apiRouter.post('/authenticate', function(req, res) {
+	User.findOne({
+		username: req.body.username
+	}).select('name username password').exec(function(err, user) {
+		if (err) {
+			throw err;
+		}
+		if (!user) {
+			res.json({
+				success: false,
+				message: 'Authentication failed. User not found.'
+			});
+		} else if (user) {
+			var validPassword = user.comparePassword(req.body.password);
+			if (!validPassword) {
+				res.json({
+					success: false,
+					message: 'Authentication failed. Wrong password.'
+				});
+			} else {
+				var token = jwt.sign({
+					name: user.name,
+					username: user.username
+				}, secret, {
+					expiresIn: '24h'
+				});
+
+				res.json({
+					success: true,
+					message: 'Enjoy your token!',
+					token: token
+				});
+			}
+		}
+	});
+});
+
 // middleware to use for all requests
 apiRouter.use(function(req, res, next) {
-	console.log('a user has came to the app.');
+	// checking header or url params or post params for the token
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-	// more middleware to be added
-	
-	next();
+	if (token) {
+		jwt.verify(token, secret, function(err, decoded) {
+			if (err) {
+				return res.status(403).send({
+					success: false,
+					message: 'Failed to authenticate token.'
+				});
+			} else {
+				// token authenticated
+				req.decoded = decoded;
+				next();
+			}
+		});
+	} else {
+		return res.status(403).send({
+			success: false,
+			message: 'No token provided.'
+		});
+	}
 });
 
 apiRouter.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to the api!' });
+});
+
+apiRouter.get('/me', function(req, res) {
+	res.send(req.decoded);
 });
 
 // create a new user
