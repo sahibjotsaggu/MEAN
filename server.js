@@ -63,7 +63,7 @@ apiRouter.post('/authenticate', function(req, res) {
 					name: user.name,
 					username: user.username
 				}, secret, {
-					expiresInMinutes: 1440 // 24 hours
+					expiresIn: '24h'
 				});
 
 				res.json({
@@ -78,11 +78,28 @@ apiRouter.post('/authenticate', function(req, res) {
 
 // middleware to use for all requests
 apiRouter.use(function(req, res, next) {
-	console.log('a user has came to the app.');
+	// checking header or url params or post params for the token
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
 
-	// more middleware to be added
-	
-	next();
+	if (token) {
+		jwt.verify(token, secret, function(err, decoded) {
+			if (err) {
+				return res.status(403).send({
+					success: false,
+					message: 'Failed to authenticate token.'
+				});
+			} else {
+				// token authenticated
+				req.decoded = decoded;
+				next();
+			}
+		});
+	} else {
+		return res.status(403).send({
+			success: false,
+			message: 'No token provided.'
+		});
+	}
 });
 
 apiRouter.get('/', function(req, res) {
