@@ -8,7 +8,7 @@
     "url": "https://github.com/sahibjotsaggu/MEAN"
   },
   "dependencies": {
-    "bcrypt": "latest",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "latest",
     "express": "latest",
     "jsonwebtoken": "^7.2.1",
