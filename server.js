@@ -3,7 +3,19 @@ var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var port = process.env.PORT || 8080;
+mongoose.Promise = global.Promise;
 var User = require('./app/models/user');
+
+try {
+	exec();
+} catch (error) {
+	console.error(error);
+}
+
+function exec() {
+	var db_url = 'mongodb://localhost:27017/MEAN';
+	mongoose.connect(db_url);
+}
 
 var app = express();
 
@@ -18,10 +30,6 @@ app.use(function(req, res, next) {
 });
 
 app.use(morgan('dev'));
-
-mongoose.Promise = global.Promise;
-var db_url = 'mongodb://localhost:27017/MEAN';
-mongoose.connect(db_url);
 
 app.get('/', function(req, res) {
 	res.send('Welcome to the home page!');
@@ -42,25 +50,37 @@ apiRouter.get('/', function(req, res) {
 	res.json({ message: 'hooray! welcome to the api!' });
 });
 
-apiRouter.route('/users').post(function(req, res) {
-	var user = new User();
-	user.name = req.body.name;
-	user.username = req.body.username;
-	user.password = req.body.password;
-	user.save(function(err) {
-		if (err) {
-			if (err.code == 11000) {
-				return res.json({
-					success: false,
-					message: 'A user with that username already exists.'
-				});
-			} else {
-				return res.send(err);
+// POST to /users to create a new user
+// GET /users to get all users in the database
+apiRouter.route('/users')
+	.post(function(req, res) {
+		var user = new User();
+		user.name = req.body.name;
+		user.username = req.body.username;
+		user.password = req.body.password;
+		user.save(function(err) {
+			if (err) {
+				if (err.code == 11000) {
+					return res.json({
+						success: false,
+						message: 'A user with that username already exists.'
+					});
+				} else {
+					return res.send(err);
+				}
 			}
-		}
-		res.json( { message: 'User created!'} );
+			res.json( { message: 'User created!'} );
+		});
+	})
+	.get(function(req, res) {
+		User.find(function(err, users) {
+			if (err) {
+				res.send(err);
+			}
+			res.json(users);
+		});
 	});
-});
+
 
 app.use('/api', apiRouter);
 
