@@ -1,6 +1,6 @@
 # MEAN
 
-This repository is meant as a basic templates for MEAN stack projects.
+This repository is meant as a basic template for MEAN stack projects.
 
 To run the code, follow these instructions:
 
