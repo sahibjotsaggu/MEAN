@@ -73,7 +73,29 @@ inject $window to store the token client-side
 
 // application configuration to integrate token into requests
 
-.factory('AuthInterceptor', function($q, AuthToken) {
+.factory('AuthInterceptor', function($q, $location, AuthToken) {
 	var interceptorFactory = {};
+
+	// attach the token to all HTTP requests
+	interceptorFactory.request = function(config) {
+		var token = AuthToken.getToken();
+		if (token) {
+			config.headers['x-access-token'] = token;
+		}
+		return config;
+	};
+
+	// errors received from the API
+	interceptorFactory.responseError = function(response) {
+		// 403 forbidden response
+		if (response.status = 403) {
+			AuthToken.setToken();
+			$location.path('/login');
+		}
+
+		// return the errors from the server as a promise
+		return $q.reject(response);
+	};
+
 	return interceptorFactory;
 });
